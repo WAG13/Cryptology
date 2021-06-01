@@ -17,7 +17,7 @@ class RC4Test {
 
             assertEquals("»Åd.b+Öà' f", new String(result));
             assertEquals("test string", new String(rc4.PRGA(result)));
-        } catch (InvalidKeyException e) {
+        } catch (Exception e) {
             System.err.println(e.getMessage());
         }
     }

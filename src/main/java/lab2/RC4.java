@@ -2,18 +2,12 @@ package lab2;
 
 import java.util.Scanner;
 
-class InvalidKeyException extends Exception {
-    public InvalidKeyException(String message) {
-        super(message);
-    }
-}
-
 public class RC4 {
-    private char[] key;
+    private final char[] key;
 
-    public RC4(String key) throws InvalidKeyException {
+    public RC4(String key) throws Exception {
         if (key.length() < 1 || key.length() > 256)
-            throw new InvalidKeyException("The key length has to be between 1 and 256.");
+            throw new Exception("The key length has to be between 1 and 256.");
         if (key.length() < 5 || key.length() > 16)
             System.out.println("It is recommended to pick the key length between 5 and 16.");
         this.key = key.toCharArray();
@@ -78,7 +72,7 @@ public class RC4 {
 
             System.out.println("Encrypted message: " + new String(result));
             System.out.println("Decrypted message: " + new String(rc4.PRGA(result)));
-        } catch (InvalidKeyException e) {
+        } catch (Exception e) {
             System.err.println(e.getMessage());
         }
     }

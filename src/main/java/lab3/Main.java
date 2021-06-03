@@ -13,7 +13,7 @@ public class Main {
         BigInteger e = new BigInteger("33445843524692047286771520482406772494816708076993");
         final String message = "Test message number 1";
 
-        RSA RSA = new RSA(p, q, e);
+        RSA RSA = new RSA();
         System.out.println(RSA);
 
         System.out.println();

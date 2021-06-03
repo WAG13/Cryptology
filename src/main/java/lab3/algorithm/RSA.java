@@ -1,5 +1,6 @@
 package lab3.algorithm;
 
+import lab1.MillerRabin;
 import lab3.algorithm.utils.RSAUtils;
 
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /** RSA algorithm   **/
 
@@ -33,22 +35,24 @@ public class RSA implements Serializable {
     }
 
     public RSA() {
-        KeyPairGenerator rsaKeyPairGener;
-        KeyPair rsaKeyPair;
-        try {
-            rsaKeyPairGener = KeyPairGenerator.getInstance("RSA");
-            rsaKeyPairGener.initialize(4096);
-            rsaKeyPair = rsaKeyPairGener.generateKeyPair();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
+        int lenth = 2048;
+        p = getPrime(lenth);
+        q = getPrime(lenth);
+        modulus = p.multiply(q);
+        BigInteger phi = (p.subtract(ONE)).multiply(q.subtract(ONE)); //phi = (p-1)*(q-1)
+        e = getPrime(6);
+        while (!e.gcd(phi).equals(BigInteger.ONE)){
+            e = getPrime(6);
         }
-        // Get keys
-        final RSAPrivateKey rsaPrivateKey = (RSAPrivateKey) rsaKeyPair.getPrivate();
-        final RSAPublicKey rsaPublicKey = (RSAPublicKey) rsaKeyPair.getPublic();
-        // Get fields
-        modulus = rsaPublicKey.getModulus();
-        e = rsaPublicKey.getPublicExponent();
-        privateKey = rsaPrivateKey.getPrivateExponent();
+        privateKey = e.modInverse(phi);
+    }
+
+    public BigInteger getPrime (int length){
+        BigInteger prime = new BigInteger(length,1,new Random());
+        while (!MillerRabin.isProbablePrime(prime,3)){
+            prime = new BigInteger(length,1,new Random());
+        }
+        return prime;
     }
 
 

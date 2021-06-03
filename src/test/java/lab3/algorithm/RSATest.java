@@ -1,4 +1,4 @@
-package lab3.algorithm.impl;
+package lab3.algorithm;
 
 import lab3.algorithm.RSA;
 import lab3.algorithm.utils.RSAUtils;

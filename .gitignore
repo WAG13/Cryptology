@@ -23,3 +23,5 @@
 hs_err_pid*
 .idea/
 target/
+src/main/java/lab3_1/
+src/test/java/lab3_1/

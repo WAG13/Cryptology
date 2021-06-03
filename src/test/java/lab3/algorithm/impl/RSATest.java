@@ -11,12 +11,20 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class RSAImplTest {
+class RSATest {
     private static RSA rsa;
 
     @BeforeAll
     static void before() {
-        rsa = new RSAImpl(new BigInteger("101"), new BigInteger("113"), new BigInteger("3533"));
+        rsa = new RSA(new BigInteger("101"), new BigInteger("113"), new BigInteger("3533"));
+    }
+
+    @Test
+    void decryptAndEncrypt() {
+        RSA rsa = new RSA();
+        BigInteger number = new BigInteger("123456789");
+        BigInteger encryptNumber = rsa.encrypt(number);
+        assertEquals(0, rsa.decrypt(encryptNumber).compareTo(number));
     }
 
     @Test
@@ -117,4 +125,6 @@ class RSAImplTest {
                 "privateKey            = 6597\n" +
                 "modulus               = 11413", rsa.toString());
     }
+
+
 }

@@ -1,7 +1,6 @@
 package lab3;
 
 import lab3.algorithm.RSA;
-import lab3.algorithm.impl.RSAImpl;
 import lab3.algorithm.utils.RSAUtils;
 
 import java.math.BigInteger;
@@ -14,7 +13,7 @@ public class Main {
         BigInteger e = new BigInteger("33445843524692047286771520482406772494816708076993");
         final String message = "Test message number 1";
 
-        RSA RSA = new RSAImpl(p, q, e);
+        RSA RSA = new RSA(p, q, e);
         System.out.println(RSA);
 
         System.out.println();

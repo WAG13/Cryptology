@@ -1,4 +1,4 @@
-package lab3.algorithm.utils;
+package lab3.utils;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

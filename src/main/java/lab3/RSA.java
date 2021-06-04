@@ -1,29 +1,26 @@
-package lab3.algorithm;
+package lab3;
 
 import lab1.MillerRabin;
-import lab3.algorithm.utils.RSAUtils;
+import lab3.utils.RSAUtils;
 
-import java.io.Serializable;
+import java.io.*;
 import java.math.BigInteger;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Random;
 
-/** RSA algorithm   **/
+/**
+ * RSA algorithm
+ **/
 
 public class RSA implements Serializable {
 
-
     private final static BigInteger ONE = BigInteger.ONE;
-    private BigInteger privateKey;
+    private final BigInteger privateKey;
+    private final BigInteger p;
+    private final BigInteger q;
+    private final BigInteger modulus;
     private BigInteger e;
-    private BigInteger modulus;
-    private BigInteger p;
-    private BigInteger q;
 
     public RSA(BigInteger p, BigInteger q, BigInteger e) {
         BigInteger phi = (p.subtract(ONE)).multiply(q.subtract(ONE)); //phi = (p-1)*(q-1)
@@ -35,30 +32,25 @@ public class RSA implements Serializable {
     }
 
     public RSA() {
-        int lenth = 2048;
-        p = getPrime(lenth);
-        q = getPrime(lenth);
+        int length = 2048; //length of prime
+        p = getPrime(length);
+        q = getPrime(length);
         modulus = p.multiply(q);
         BigInteger phi = (p.subtract(ONE)).multiply(q.subtract(ONE)); //phi = (p-1)*(q-1)
         e = getPrime(6);
-        while (!e.gcd(phi).equals(BigInteger.ONE)){
+        while (!e.gcd(phi).equals(ONE)) {
             e = getPrime(6);
         }
         privateKey = e.modInverse(phi);
     }
 
-    public BigInteger getPrime (int length){
-        BigInteger prime = new BigInteger(length,1,new Random());
-        while (!MillerRabin.isProbablePrime(prime,3)){
-            prime = new BigInteger(length,1,new Random());
+    public BigInteger getPrime(int length) {
+        BigInteger prime = new BigInteger(length, 1, new Random());
+        while (!MillerRabin.isProbablePrime(prime, 3)) {
+            prime = new BigInteger(length, 1, new Random());
         }
         return prime;
     }
-
-
-    /**
-     * Шифрування
-     */
 
     public BigInteger encrypt(BigInteger bigInteger) {
         if (isModulusSmallerThanMessage(bigInteger))
@@ -70,11 +62,9 @@ public class RSA implements Serializable {
         List<BigInteger> toEncrypt = new ArrayList<BigInteger>();
         BigInteger messageBytes = new BigInteger(message.getBytes());
         if (isModulusSmallerThanMessage(messageBytes)) {
-            toEncrypt = getValidEncryptionBlocks(RSAUtils.splitMessages(new ArrayList<String>() {
-                {
-                    add(message);
-                }
-            }));
+            toEncrypt = getValidEncryptionBlocks(RSAUtils.splitMessages(new ArrayList<String>() {{
+                add(message);
+            }}));
         } else {
             toEncrypt.add((messageBytes));
         }
@@ -85,10 +75,6 @@ public class RSA implements Serializable {
         }
         return encrypted;
     }
-
-    /**
-     * Розшифровування
-     */
 
     public BigInteger decrypt(BigInteger encrypted) {
         return encrypted.modPow(privateKey, modulus);
@@ -101,10 +87,6 @@ public class RSA implements Serializable {
         }
         return decryption;
     }
-
-    /**
-     * Digital signature
-     */
 
     public BigInteger sign(BigInteger bigInteger) {
         return bigInteger.modPow(privateKey, modulus);
@@ -128,10 +110,6 @@ public class RSA implements Serializable {
         }
         return signed;
     }
-
-    /**
-     * Verification
-     */
 
     public BigInteger verifySignedMessage(BigInteger signedMessage) {
         return signedMessage.modPow(e, modulus);
@@ -179,14 +157,27 @@ public class RSA implements Serializable {
         return modulus.compareTo(messageBytes) < 0;
     }
 
-    public String toString() {
-        String s = "";
-        s += "p                     = " + p + "\n";
-        s += "q                     = " + q + "\n";
-        s += "e                     = " + e + "\n";
-        s += "privateKey            = " + privateKey + "\n";
-        s += "modulus               = " + modulus;
-        return s;
+    public static void main(String[] args) throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in, "US-ASCII"));
+        System.out.print("Message: ");
+        String message = in.readLine();
+
+        RSA RSA = new RSA();
+
+        List<BigInteger> decimalMessage = RSA.messageToDecimal(message);
+        List<BigInteger> encryption = RSA.encryptMessage(message);
+        List<BigInteger> signed = RSA.signMessage(message);
+        List<BigInteger> decrypt = RSA.decryptMessages(encryption);
+        List<BigInteger> verify = RSA.verify(signed);
+
+        System.out.println("message(plain text)   = " + RSAUtils.bigIntegerToString(decimalMessage));
+        System.out.println("message(decimal)      = " + RSAUtils.bigIntegerSum(decimalMessage));
+        System.out.println("encripted(decimal)    = " + RSAUtils.bigIntegerSum(encryption));
+        System.out.println("decrypted(decimal)    = " + RSAUtils.bigIntegerSum(decrypt));
+        System.out.println("decrypted(plain text) = " + RSAUtils.bigIntegerToString(decrypt));
+        System.out.println("signed(decimal)       = " + RSAUtils.bigIntegerSum(signed));
+        System.out.println("verified(decimal)     = " + RSAUtils.bigIntegerSum(verify));
+        System.out.println("verified(plain text)  = " + RSAUtils.bigIntegerToString(verify));
     }
 
 }

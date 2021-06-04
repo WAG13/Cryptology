@@ -1,4 +1,4 @@
-package lab3.algorithm.utils;
+package lab3.utils;
 
 import org.junit.jupiter.api.Test;
 
